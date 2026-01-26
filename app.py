@@ -9,7 +9,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler()]
 )
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
 
 REQUESTS = Counter("http_requests_total", "Total HTTP requests", ["method", "endpoint"])
 
