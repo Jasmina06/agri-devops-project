@@ -2,7 +2,7 @@ import logging
 from flask import Flask, jsonify
 from prometheus_client import Counter, generate_latest
 
-app = Flask(name)
+app = Flask(__name__) 
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,7 +16,7 @@ REQUESTS = Counter("http_requests_total", "Total HTTP requests", ["method", "end
 @app.route("/")
 def home():
     REQUESTS.labels(method="GET", endpoint="/").inc()
-    logger.info("Home page accessed - Product list updated") # LOGGING
+    logger.info("Home page accessed - Product list updated") 
     return jsonify({
         "service": "Agricultural Product Platform",
         "status": "running",
@@ -25,7 +25,6 @@ def home():
 
 @app.route("/notify")
 def notify():
-    """Scenario 2: Order Notification System"""
     REQUESTS.labels(method="GET", endpoint="/notify").inc()
     logger.info("ORDER_NOTIFICATION: Message sent to supplier successfully")
     return jsonify({"status": "Notification sent", "reliable": True})
@@ -34,5 +33,5 @@ def notify():
 def metrics():
     return generate_latest()
 
-if name == "main":
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
