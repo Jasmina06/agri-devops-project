@@ -1,36 +1,38 @@
-from flask import Flask, jsonify, Response
-from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+import logging
+from flask import Flask, jsonify
+from prometheus_client import Counter, generate_latest
 
-app = Flask(__name__)
+app = Flask(name)
 
-# Prometheus metric
-REQUESTS = Counter(
-    "http_requests_total",
-    "Total HTTP requests",
-    ["method", "endpoint"]
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
 )
+logger = logging.getLogger(name)
+
+REQUESTS = Counter("http_requests_total", "Total HTTP requests", ["method", "endpoint"])
 
 @app.route("/")
 def home():
     REQUESTS.labels(method="GET", endpoint="/").inc()
+    logger.info("Home page accessed - Product list updated") # LOGGING
     return jsonify({
         "service": "Agricultural Product Platform",
         "status": "running",
         "message": "Daily product list is available"
     })
 
-@app.route("/products")
-def products():
-    REQUESTS.labels(method="GET", endpoint="/products").inc()
-    return jsonify([
-        {"name": "Wheat", "price": 250},
-        {"name": "Corn", "price": 180},
-        {"name": "Rice", "price": 300}
-    ])
+@app.route("/notify")
+def notify():
+    """Scenario 2: Order Notification System"""
+    REQUESTS.labels(method="GET", endpoint="/notify").inc()
+    logger.info("ORDER_NOTIFICATION: Message sent to supplier successfully")
+    return jsonify({"status": "Notification sent", "reliable": True})
 
 @app.route("/metrics")
 def metrics():
-    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+    return generate_latest()
 
-if __name__ == "__main__":
+if name == "main":
     app.run(host="0.0.0.0", port=8000)
