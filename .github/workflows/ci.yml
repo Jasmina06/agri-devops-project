@@ -27,7 +27,8 @@ jobs:
 
       - name: Run Tests with Logging Check
         run: |
-          pytest --cov=app tests/
+          # PYTHONPATH=. yordamida joriy papkani Python qidiruv yo'liga qo'shamiz
+          PYTHONPATH=. pytest --cov=app tests/
 
       - name: Deploy to AWS
         uses: appleboy/ssh-action@master
