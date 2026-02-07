@@ -3,30 +3,35 @@ version: "3.9"
 services:
   app:
     build: .
-    container_name: agri-app
+    container_name: agri_api
     ports:
       - "8000:8000"
-    networks:
-      - agri-network
+    restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
-    networks:
-      - agri-network
+    depends_on:
+      - app
+    restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:9.5.15
+    image: grafana/grafana
     container_name: grafana
     ports:
       - "3000:3000"
-    networks:
-      - agri-network
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
-networks:
-  agri-network:
-    driver: bridge
+volumes:
+  grafana-data:
