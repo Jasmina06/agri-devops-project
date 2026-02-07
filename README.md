@@ -51,21 +51,7 @@ Minikube (local Kubernetes cluster)
 
 📂 Repository Structure
 
-agri-devops-project/
-│
-├── app.py
-├── Dockerfile
-├── docker-compose.yml
-├── prometheus.yml
-├── requirements.txt
-│
-├── k8s/
-│   ├── application.yaml      # Argo CD Application manifest
-│   ├── deployment.yaml       # Kubernetes Deployment
-│   └── service.yaml          # Kubernetes Service
-│
-└── .github/workflows/
-    └── ci.yml                # CI pipeline
+![Repository Structure](images/repository-structure.png)
 
 
 🚀 CI/CD Pipeline
