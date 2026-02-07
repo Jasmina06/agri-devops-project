@@ -1,85 +1,168 @@
-# 🚜 Agricultural Digital Platform - DevOps Implementation
+🌱 Agri DevOps Project — GitOps with Argo CD
 
-This repository contains a full-lifecycle DevOps implementation for a digital agricultural platform. The project is designed to solve real-world agricultural challenges using automation, containerization, and cloud-native monitoring.
+This repository contains a containerised agricultural web application deployed to Kubernetes and managed using GitOps principles with Argo CD.
 
-## 📋 Table of Contents
-* [Project Overview](#project-overview)
-* [Business Scenarios](#business-scenarios)
-* [Tech Stack](#tech-stack)
-* [CI/CD Pipeline](#cicd-pipeline)
-* [Monitoring & Metrics](#monitoring--metrics)
-* [Setup & Deployment](#setup--deployment)
+The project was developed as an academic DevOps learning project, focusing on containerisation, CI/CD automation, Kubernetes deployment, and GitOps workflows.
 
----
+📌 Project Overview
 
-## 🌟 Project Overview
-The platform provides a reliable bridge between farmers and suppliers. It ensures real-time product availability and mission-critical notification systems using a robust DevOps toolchain.
+The application exposes a simple HTTP API representing an agricultural digital platform.
+The main goal of the project is not business logic, but infrastructure, automation, and deployment practices.
 
-## 🌾 Business Scenarios Covered
-- **Scenario 1 (Product Board):** A Flask-based interface for real-time agricultural product listing and updates.
-- **Scenario 2 (Notifications):** An automated system to notify suppliers of orders, with built-in reliability tracking.
-- **Scenario 4 (Seasonal Demand):** Containerized architecture designed to handle peak seasonal traffic spikes.
-- **Scenario 5 (Operational Visibility):** Full-stack monitoring to maintain system health and uptime.
+Key objectives:
 
-## 🛠 Tech Stack
-* **Backend:** Python (Flask)
-* **Containerization:** Docker & Docker Compose
-* **CI/CD:** GitHub Actions
-* **Cloud Infrastructure:** AWS EC2 (Ubuntu 24.04 LTS)
-* **Monitoring:** Prometheus & Grafana
-* **Testing:** Pytest with Coverage
+Containerise the application using Docker
 
----
+Deploy the application to Kubernetes
 
-## 🚀 CI/CD Pipeline (LO2 & LO3)
-The project utilizes an automated pipeline defined in `.github/workflows/ci.yml`.
+Manage deployments declaratively using GitOps
 
-1.  **Automated Testing:** Every push triggers `pytest` to ensure functionality across all agricultural scenarios.
-2.  **Continuous Deployment:** Once tests pass, the code is automatically deployed to the **AWS EC2** instance via SSH.
-3.  **Security:** Deployment is secured using GitHub Secrets to manage sensitive SSH private keys.
+Automate synchronization using Argo CD
+
+Integrate monitoring with Prometheus
+
+🧱 Architecture Overview
+GitHub Repository
+        ↓
+     Argo CD
+        ↓
+   Kubernetes (Minikube)
+        ↓
+ Deployment → Service → Pod
 
 
+All Kubernetes resources are stored in GitHub and automatically synced to the cluster by Argo CD.
 
----
+🛠 Technologies Used
 
-## 📊 Monitoring & Metrics (LO4 & M4)
-To satisfy the requirements for performance evaluation, we have integrated a real-time monitoring suite:
+Python (Flask-based API)
 
-- **Metrics Collection:** The application exports custom Prometheus metrics via the `/metrics` endpoint.
-- **Request Tracking:** Every agricultural order notification is tracked using an `http_requests_total` counter.
-- **Visual Analytics:** A Grafana dashboard provides a live view of system stress levels and seasonal demand simulation.
+Docker & Docker Compose
 
-### Evidence of Success:
-- **P8 (Summarise outcomes):** The deployment on AWS (IP: 13.62.102.94) was successful, with all services running in Docker containers.
-- **M4 (Analyse outcomes):** Stress tests conducted on the `/notify` endpoint showed 100% availability, as visualized in the Grafana spikes.
+Kubernetes
+
+Argo CD
+
+GitHub Actions (CI)
+
+Prometheus (metrics collection)
+
+Minikube (local Kubernetes cluster)
+
+📂 Repository Structure
+
+agri-devops-project/
+│
+├── app.py
+├── Dockerfile
+├── docker-compose.yml
+├── prometheus.yml
+├── requirements.txt
+│
+├── k8s/
+│   ├── application.yaml      # Argo CD Application manifest
+│   ├── deployment.yaml       # Kubernetes Deployment
+│   └── service.yaml          # Kubernetes Service
+│
+└── .github/workflows/
+    └── ci.yml                # CI pipeline
+
+
+🚀 CI/CD Pipeline
+
+The CI pipeline is implemented using GitHub Actions.
+
+Pipeline steps:
+
+Install dependencies
+
+Run basic checks/tests
+
+Build Docker image
+
+Every push to the main branch triggers the pipeline.
+
+🔁 GitOps with Argo CD
+
+Argo CD is used to manage Kubernetes deployments.
+
+Repository: GitHub
+
+Sync mode: Automatic
+
+Cluster: in-cluster (Minikube)
+
+Namespace: default
+
+Argo CD continuously monitors the Git repository and ensures the Kubernetes cluster matches the declared state.
+
+Argo CD Status
+
+Application Health: ✅ Healthy
+
+Sync Status: ✅ Synced
+
+📊 Monitoring
+
+Prometheus is configured to scrape application metrics exposed by the application.
+
+Metrics endpoint:
+`/metrics`
+
+Prometheus configuration is defined in `prometheus.yml`.
+
+### Grafana Dashboard
+
+Grafana is used to visualize metrics collected by Prometheus.
+The dashboard provides real-time visibility into application behaviour and system performance.
+
+Below is an example Grafana dashboard displaying live metrics:
 
 
 
----
+![Grafana Dashboard](images/grafana-dashboard.png)
 
-## ⚙️ Setup & Deployment
+![Grafana Dashboard Panel](images/grafana-dashboard1.png)
 
-### AWS Environment Setup
-The server is configured with the following open ports in the Security Group:
-* `8000`: Application
-* `3000`: Grafana Dashboard
-* `9090`: Prometheus Server
+![Grafana Dashboard Metrics](images/grafana-dashboard2.png)
 
-### Running the Project Locally
-1.  **Clone the Repo:**
-    ```bash
-    git clone [https://github.com/Jasmina06/agri-devops-project.git](https://github.com/Jasmina06/agri-devops-project.git)
-    ```
-2.  **Start Services:**
-    ```bash
-    docker-compose up --build -d
-    ```
-3.  **Verify:**
-    - App: `http://localhost:8000`
-    - Metrics: `http://localhost:8000/metrics`
-    - Grafana: `http://localhost:3000` (User/Pass: admin/admin)
 
----
-**Author:** Jasmina
-**Course:** BTEC Level 5 - Unit: DevOps
-**Status:** Successfully Implemented & Monitored
+
+⚙️ Running the Project Locally
+1️⃣ Start Kubernetes
+minikube start --driver=docker
+
+2️⃣ Install Argo CD
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+3️⃣ Access Argo CD UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+
+Open:
+👉 https://localhost:8080
+
+
+## ArgoCD Application
+
+![ArgoCD Application](images/argocd-application.png)
+
+![ArgoCD Application Details](images/argocd-application1.png)
+
+
+🎯 Conclusion
+
+This project demonstrates a complete DevOps workflow:
+
+Containerisation
+
+CI automation
+
+Kubernetes deployment
+
+GitOps-based delivery using Argo CD
+
+Monitoring with Prometheus
+
+The focus of the project is infrastructure, reliability, and automation, rather than application complexity.
